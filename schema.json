@@ -1,0 +1,32 @@
+{
+  "http_host": {
+    "type": "string",
+    "default": "localhost",
+    "hint": "LLOneBot HTTP server address"
+  },
+  "http_port": {
+    "type": "integer",
+    "default": 3000,
+    "hint": "LLOneBot HTTP port"
+  },
+  "access_token": {
+    "type": "string",
+    "default": "",
+    "hint": "Access token if set in LLOneBot"
+  },
+  "master_id": {
+    "type": "string",
+    "default": "769690776",
+    "hint": "主人QQ号，拥有所有权限"
+  },
+  "allowed_users": {
+    "type": "string",
+    "default": "",
+    "hint": "其他允许使用该工具的用户QQ，多个用逗号分隔"
+  },
+  "restricted_groups": {
+    "type": "string",
+    "default": "",
+    "hint": "只有主人能查看的群聊QQ群号，多个用逗号分隔"
+  }
+}

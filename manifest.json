@@ -1,0 +1,8 @@
+{
+  "display_name": "History Plugin",
+  "plugin_id": "history_plugin",
+  "version": "1.2.0",
+  "author": "znq19",
+  "description": "Provide tools to fetch group/private message history",
+  "repo": null
+}
