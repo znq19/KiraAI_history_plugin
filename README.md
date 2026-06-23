@@ -8,8 +8,11 @@
 1.安装方法：
 
 （1）安装给kira项目文件夹安装依赖（请根据你的实际路径调整）：
+
 cd C:\Users\Administrator\Desktop\KiraAI-main
+
 venv\Scripts\activate
+
 pip install httpx
 
 （2）onebot程序开启HTTP服务，确认端口（默认3000）和token。
