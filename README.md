@@ -1,4 +1,4 @@
-# KiraAI_history_plugin
+# KiraAI_history_plugin/跨会话历史消息与总结插件
 提供工具让AI可以跨会话获取群聊/私聊消息历史 Provide tools to fetch group/private message history
 
 0.插件功能：可以让你的ai跨会话（群聊和私聊）总结目标群和私聊的聊天记录。必须是同适配器和已建立会话的目标。
