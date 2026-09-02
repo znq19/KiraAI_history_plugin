@@ -14,6 +14,11 @@
     "default": "",
     "hint": "Access token if set in OneBot"
   },
+  "use_ws": {
+    "type": "switch",
+    "default": true,
+    "hint": "优先使用适配器 WS 通道拉取历史（与转发/撤回同一 ID 命名空间，SnowLuma 下 get_msg 可反查）；关闭则仅用 HTTP 通道"
+  },
   "master_id": {
     "type": "string",
     "default": "",
