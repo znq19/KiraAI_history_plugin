@@ -1,5 +1,5 @@
 {
-  "display_name": "跨会话历史与总结工具",
+  "display_name": "history plugin 跨会话历史与总结",
   "plugin_id": "history_plugin",
   "version": "1.3.2",
   "author": "znq19",
