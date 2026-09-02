@@ -1,7 +1,7 @@
 {
   "display_name": "History Plugin",
   "plugin_id": "history_plugin",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "author": "znq19",
   "description": "提供工具让AI可以跨会话获取群聊/私聊消息历史，支持 NapCat / LLOneBot / SnowLuma 强解析（WS 通道优先 + get_msg 刷新媒体源）Provide tools to fetch group/private message history with strong parsing across NapCat / LLOneBot / SnowLuma",
   "icon": "icon.png",
