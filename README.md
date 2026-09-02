@@ -1,6 +1,6 @@
-# KiraAI History Plugin（跨会话历史消息插件）
+# KiraAI History Plugin/跨会话历史与总结
 
-> 提供工具让 AI 可以跨会话获取群聊/私聊消息历史，支持 NapCat / LLOneBot / SnowLuma 三种 OneBot 实现。
+> 提供工具让 AI 可以跨会话获取群聊/私聊消息历史并总结，支持 NapCat / LLOneBot / SnowLuma 三种 OneBot 实现。
 
 ## 这是什么？
 
