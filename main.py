@@ -200,6 +200,30 @@ class HistoryPlugin(BasePlugin):
         return False
 
 
+    def _is_placeholder(self, msg: dict) -> bool:
+        """True when the message renders as a placeholder (empty quote) and
+        carries no real content - SnowLuma stores reply-conversion failures
+        as such (raw_message = "[引用消息]" with empty/placeholder segments).
+        Filtering these keeps the LLM context clean."""
+        raw = (msg.get("raw_message") or "").strip()
+        segs = msg.get("message") or []
+        # Placeholder raw_message (non-empty) marks a conversion failure.
+        if raw and raw in _PLACEHOLDER_RAW:
+            return True
+        # Empty raw_message is normal for segment-based messages - only
+        # filter when there is genuinely no content at all.
+        if not raw and not segs:
+            return True
+        # Render the content; if it is empty or a pure placeholder after
+        # stripping the trailing (msg_id:xxx), the message is not real.
+        content = self._message_to_text(msg)
+        content = re.sub(r"\s*\(msg_id:-?\d+\)\s*$", "", content).strip()
+        if not content:
+            return True
+        if content in ("[空消息]", "[引用消息]", "[引用]", "[转发消息]"):
+            return True
+        return False
+
     def _message_to_text(self, msg: dict) -> str:
         """Convert a message to formatted text. Uses raw_message only when it
         is real content; placeholder raw_message (e.g. SnowLuma's
@@ -322,9 +346,7 @@ class HistoryPlugin(BasePlugin):
         formatted = []
         skipped = 0
         for msg in messages[-count:]:
-            raw = (msg.get("raw_message") or "").strip()
-            segs = msg.get("message") or []
-            if raw in _PLACEHOLDER_RAW and not segs:
+            if self._is_placeholder(msg):
                 skipped += 1
                 continue
             sender = msg.get("sender", {}).get("nickname", "Unknown")

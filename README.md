@@ -39,6 +39,14 @@
 
 跟 AI 说"总结某某群/某某人最近聊了些什么"即可。默认条数可在配置中调整，也可直接使用时说明。
 
+## 附带的 KiraAI Skill：跨会话总结（summarize_other）
+
+仓库里附带了一个 KiraAI 的 **Skill**（`summarize_other/`），让机器人学会"总结其他会话"这件事：
+
+- **是什么**：KiraAI 的 Skills 系统（`data/skills/<名字>/SKILL.md`，YAML frontmatter 声明 `name` + `description`）会在系统提示里列出可用技能，AI 判断场景匹配后读取 SKILL.md 并照做。本 skill 就是教 AI：用户想总结某个群/某个人时，调 `get_history` 拿消息 → 提炼 40-120 字总结。
+- **怎么装**：把 `summarize_other/` 文件夹复制到 KiraAI 的 `data/skills/` 下（即 `data/skills/summarize_other/SKILL.md`），然后在 WebUI 的 Skills 页面确认启用即可。
+- **不用也无所谓**：这个 skill 只是"锦上添花"——它本质是给 AI 一段提示词。就算不装，AI 也能直接听懂"总结某某群最近聊了什么"并自己调用 `get_history` 工具；装了只是让 AI 更稳定地按固定格式总结（40-120 字、提炼核心观点、失败时礼貌告知）。你也可以自己改 `SKILL.md` 里的提示词，或者干脆让 AI 自己学会——工具本身才是核心，skill 只是使用姿势的模板。
+
 ## 工作原理
 
 ```
@@ -74,6 +82,12 @@ A：不需要。WS 通道复用 KiraAI 框架已有的适配器连接，零配�
 
 <details>
 <summary><b>更新日志</b></summary>
+
+### v1.3.2（2026-09-03）
+
+- **修复**：空引用占位过滤加强——不再只匹配 `raw_message` 占位 + 空段数组，改为**渲染后判定**：内容为空、或纯占位（`[空消息]`/`[引用消息]`/`[引用]`/`[转发消息]`）的消息一律过滤，覆盖 SnowLuma 存储的"空文本段"占位形态
+- **修复**：插件中文名恢复为「跨会话历史与总结工具」（"总结"二字回归）
+- **新增**：附带 KiraAI Skill `summarize_other`（标准 `SKILL.md` 格式），README 说明安装方式与"不用也无所谓"的定位
 
 ### v1.3.0（2026-09-02）
 
