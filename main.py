@@ -315,12 +315,27 @@ class HistoryPlugin(BasePlugin):
 
 
         # ---------- 7. 格式化消息（取最近的 count 条） ----------
+        # Filter out placeholder messages that could not be resolved even
+        # after get_msg refresh (SnowLuma stores reply-conversion failures
+        # as empty messages with a "[引用消息]" raw_message placeholder).
+        # Showing them would confuse the LLM with fake "empty quotes".
         formatted = []
+        skipped = 0
         for msg in messages[-count:]:
+            raw = (msg.get("raw_message") or "").strip()
+            segs = msg.get("message") or []
+            if raw in _PLACEHOLDER_RAW and not segs:
+                skipped += 1
+                continue
             sender = msg.get("sender", {}).get("nickname", "Unknown")
             content = self._message_to_text(msg)
             formatted.append(f"{sender}: {content}")
 
+        if skipped:
+            logger.info(f"[history] filtered {skipped} unresolvable placeholder messages")
+
+        if not formatted:
+            return "No messages found."
 
         result_text = "\n".join(formatted)
 
