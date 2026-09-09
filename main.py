@@ -237,15 +237,18 @@ class HistoryPlugin(BasePlugin):
         # Genuinely empty (no raw text and no segments).
         if not raw and not segs:
             return True
-        # SnowLuma's synthetic reply-target backfill is a single
-        # "[引用消息]" text with user_id 0 (message-actions.ts
-        # buildBackfillEvent). A real user message containing the same text
-        # keeps its real user_id and must be shown.
+        # SnowLuma's synthetic reply-target backfill (buildBackfillEvent) is a
+        # single "[引用消息]" text whose sender identity is EMPTY: nickname and
+        # card are always "", while user_id is the QUOTED message's sender uin
+        # - frequently a real, non-zero uin - so an uid==0 test alone misses
+        # most of them. A real user message keeps a nickname/card and is shown.
         sender = msg.get("sender") if isinstance(msg.get("sender"), dict) else {}
         uid = str(msg.get("user_id") or sender.get("user_id") or "").strip()
+        nick = str(sender.get("nickname") or "").strip()
+        card = str(sender.get("card") or "").strip()
         seg_text = self._segments_to_text(segs).strip() if segs else ""
-        if uid in ("", "0") and (raw in _PLACEHOLDER_TOKENS
-                                 or seg_text in _PLACEHOLDER_TOKENS):
+        is_token = raw in _PLACEHOLDER_TOKENS or seg_text in _PLACEHOLDER_TOKENS
+        if is_token and (uid in ("", "0") or (not nick and not card)):
             return True
         # Placeholder raw marker with no segments at all.
         if raw in _PLACEHOLDER_TOKENS and not segs:

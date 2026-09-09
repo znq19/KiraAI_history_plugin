@@ -168,6 +168,18 @@ out3 = call(make_plugin([real_msg(1), FORWARD, placeholder(-2)]), 5)
 check("forward message_id present in history output",
       "(msg_id:9001)" in out3 and "转发" in out3, out3)
 
+PLACEHOLDER_REAL_UID = {"message_id": 773116280,
+                        "raw_message": "&#91;引用消息&#93;",
+                        "message": [TEXT("[引用消息]")], "user_id": 769690776,
+                        "time": 1757300300,
+                        "sender": {"user_id": 769690776, "nickname": "", "card": "",
+                                    "role": "member", "sex": "unknown", "age": 0}}
+check("synthetic placeholder with a REAL user_id is filtered",
+      svc2._is_placeholder(PLACEHOLDER_REAL_UID) is True)
+out4 = call(make_plugin([real_msg(1), PLACEHOLDER_REAL_UID]), 5)
+check("real-uid placeholder absent from history output",
+      "773116280" not in out4, out4)
+
 
 print()
 passed = sum(1 for _, ok in results if ok)
