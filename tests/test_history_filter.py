@@ -17,6 +17,11 @@ import types
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
+HERE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(HERE_DIR)
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 # --- minimal KiraAI stubs so main.py imports standalone ---
 for name in ("core", "core.chat", "core.chat.message_utils"):
     sys.modules[name] = types.ModuleType(name)
@@ -47,8 +52,22 @@ core_plugin.logger = types.SimpleNamespace(
     info=lambda *a, **k: None, error=lambda *a, **k: None, warning=lambda *a, **k: None)
 sys.modules["core.plugin"] = core_plugin
 
-spec = importlib.util.spec_from_file_location("hist_main", os.path.join(ROOT, "main.py"))
+pkg_name = "histpkg"
+pkg = types.ModuleType(pkg_name)
+pkg.__path__ = [ROOT]
+pkg.__package__ = pkg_name
+sys.modules[pkg_name] = pkg
+for _sub in ("locate", "onebot_compat"):
+    _s = importlib.util.spec_from_file_location(
+        f"{pkg_name}.{_sub}", os.path.join(ROOT, f"{_sub}.py"))
+    _m = importlib.util.module_from_spec(_s)
+    sys.modules[f"{pkg_name}.{_sub}"] = _m
+    _s.loader.exec_module(_m)
+
+spec = importlib.util.spec_from_file_location(f"{pkg_name}.hist_main",
+                                              os.path.join(ROOT, "main.py"))
 mod = importlib.util.module_from_spec(spec)
+sys.modules[f"{pkg_name}.hist_main"] = mod
 spec.loader.exec_module(mod)
 HistoryPlugin = mod.HistoryPlugin
 
@@ -115,7 +134,7 @@ out = call(make_plugin(msgs), 10)
 lines = [l for l in out.splitlines() if l.strip()]
 check("escaped placeholder rows filtered", all("引用消息" not in l for l in lines), lines)
 check("over-fetch still returns 10 real messages", len(lines) == 10, len(lines))
-check("newest real message kept", lines[-1].startswith("U18:"), lines[-1])
+check("newest real message kept", lines[-1].startswith("U18(118):"), lines[-1])
 check("CQ entities unescaped for display",
       "看[x]" in out and "&#91;" not in out, out.splitlines()[0])
 

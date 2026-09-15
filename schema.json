@@ -33,5 +33,110 @@
     "type": "string",
     "default": "",
     "hint": "只有主人能查看的群聊QQ群号，多个用逗号分隔"
+  },
+  "enable_locate": {
+    "type": "switch",
+    "default": true,
+    "hint": "启用定位查询：允许 since/until/user_id/keyword/offset/scan_limit 参数，从最新消息往回翻页并按条件过滤。关闭则完全等同旧版（只按条数取最近）。"
+  },
+  "enable_time_range": {
+    "type": "switch",
+    "default": true,
+    "hint": "允许 since/until 时间过滤参数。"
+  },
+  "enable_user_filter": {
+    "type": "switch",
+    "default": true,
+    "hint": "允许 user_id 参数（同时匹配 QQ 号、群名片、昵称）。"
+  },
+  "enable_keyword": {
+    "type": "switch",
+    "default": true,
+    "hint": "允许 keyword 参数。若担心模型乱搜可只关这一项。"
+  },
+  "locate_head_meta": {
+    "type": "switch",
+    "default": true,
+    "hint": "在定位结果最前面加「命中/扫描/覆盖/到最早/耗时」。强烈建议开启：没有它，模型会把「没扫到」说成「群里没人说过」。"
+  },
+  "locate_fallback_on_error": {
+    "type": "switch",
+    "default": true,
+    "hint": "翻页途中锚点失效（NapCat/LLOneBot 的短 ID 缓存会淘汰旧 ID）时自动从最新一页重新定位。"
+  },
+  "keyword_case_sensitive": {
+    "type": "switch",
+    "default": false,
+    "hint": "关键词是否区分大小写，默认不区分。"
+  },
+  "early_stop_on_enough": {
+    "type": "switch",
+    "default": true,
+    "hint": "不带 since 时间下界时，命中数达标即停止扫描（更快）。带 since 时始终扫到时间边界。"
+  },
+  "detect_boundary": {
+    "type": "switch",
+    "default": true,
+    "hint": "识别已扫到历史尽头并在结果头标注「到最早=是」。"
+  },
+  "default_scan_limit": {
+    "type": "integer",
+    "default": 300,
+    "hint": "模型不传 scan_limit 时往回扫多少条。300 约等于中群一天；命中不够时模型可自行加大。"
+  },
+  "max_scan_limit": {
+    "type": "integer",
+    "default": 0,
+    "hint": "scan_limit 的硬上限。0 = 按协议实现自适应（NapCat 2000 / LLOneBot 1200 / SnowLuma 800）。"
+  },
+  "scan_max_seconds": {
+    "type": "integer",
+    "default": 25,
+    "hint": "单次定位最多扫多久（秒）。框架工具超时默认 60 秒，这里留足余量。"
+  },
+  "max_fetch_per_request": {
+    "type": "integer",
+    "default": 50,
+    "hint": "每次向 OneBot 请求多少条。会被各实现的单次上限自动压低（LLOneBot ≤30）。"
+  },
+  "fetch_timeout_sec": {
+    "type": "integer",
+    "default": 15,
+    "hint": "单次 OneBot 历史请求超时（秒）。"
+  },
+  "max_scanned_per_turn": {
+    "type": "integer",
+    "default": 3000,
+    "hint": "每回合内所有定位调用累加的扫描条数上限，防止连续调用打爆服务器。0 表示不限制。"
+  },
+  "max_calls_per_turn": {
+    "type": "integer",
+    "default": 3,
+    "hint": "每回合允许调用 get_history 的总次数。定位需要多轮尝试（换条件/翻页），故比旧的隐式限制略高。"
+  },
+  "max_calls_per_target_per_turn": {
+    "type": "integer",
+    "default": 2,
+    "hint": "同一会话每回合最多查几次。旧版为 1（无法翻页），现默认 2；条件不同的多轮定位放行，重复条件仍拦截。"
+  },
+  "max_keywords": {
+    "type": "integer",
+    "default": 5,
+    "hint": "单次最多接受几个关键词，超出按顺序截断。"
+  },
+  "offset_max": {
+    "type": "integer",
+    "default": 1000,
+    "hint": "单次 offset 的最大值，防止模型从很靠后的位置「找」结果。"
+  },
+  "max_return_count": {
+    "type": "integer",
+    "default": 80,
+    "hint": "count 参数上限（与旧版 80 一致）。"
+  },
+  "locate_cache_ttl_sec": {
+    "type": "integer",
+    "default": 120,
+    "hint": "完全相同的定位条件在此时长内直接返回缓存，避免重复扫描。"
   }
 }
